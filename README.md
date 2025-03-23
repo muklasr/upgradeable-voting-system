@@ -1,66 +1,38 @@
-## Foundry
+## Upgradeable Voting-System
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+**Voting-System that allow to upgrade the smart contracts**
 
-Foundry consists of:
+### Tech
+#### Framework
+- Foundry
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+#### Libraries
+- openzeppelin-contracts
+- openzeppelin-contracts-upgradeable
 
-## Documentation
+#### Test
+- Hardhat (Because we need to test using OpenZeppelin plugin)
 
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
-```
-
-### Test
-
-```shell
-$ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
+### Learning Notes
+> What I learned while building this project
+- Deployed smart contract is immutable.
+- Create upgradeable smart contract using OpenZeppelin.
+- Use proxy pattern → Proxy holds state & delegates logic to implementation contracts.
+- Foundry vs Hardhat:
+    - Foundry → Fast, efficient for testing & fuzzing, uses Rust-like CLI.
+    - Hardhat → Best for plugin ecosystem, scripting, and deployment automation.
+    - Mixing Foundry & Hardhat is not best practice due to tool differences.
+- Overriding deployed non-virtual function is tricky.
+    - Solution: Use state variable to force execution of new logic.
+- Changing storage layout can break upgrades.
+    - Modifying structs directly = bad (causes storage misalignment).
+    - Solution: Use mappings instead of modifying structs.
+- Function behavior after upgrade:
+    - New require() or logic using old storage layout = upgrade safe.
+    - Only changing string in function = still calls old function.
+    - Adding new state variable (not in existing struct) = safe upgrade.
+- Rollout deployment strategies in Web3:
+    - Feature flags → Toggle features dynamically.
+    - Split proxy → A/B testing for contract versions.
+    - Opt-in upgrade → Users choose when to migrate.
+- Upgrade is instant for all users using proxy → No gradual rollout unless custom logic is added.
