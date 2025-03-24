@@ -25,7 +25,7 @@ contract VotingUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeable
         _;
     }
 
-    function initialize(uint256 _duration, string memory _proposal) public initializer {
+    function initialize(uint256 _duration, string memory _proposal) public virtual initializer {
         __Ownable_init(msg.sender);
         __UUPSUpgradeable_init();
         votingDeadline = block.timestamp + _duration;
@@ -33,7 +33,7 @@ contract VotingUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeable
         proposal = _proposal;
     }
 
-    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+    function _authorizeUpgrade(address newImplementation) internal virtual override onlyOwner {}
 
     function addCandidate(string memory _name) external virtual onlyOwner {
         candidates.push(Candidate(_name, 0));
